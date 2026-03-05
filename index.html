@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECHO STUDIO — Professional Recording & Production</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES
+    ============================================================ */
+    :root {
+      --bg:        #0a0a0c;
+      --bg2:       #111116;
+      --bg3:       #18181f;
+      --border:    rgba(255,255,255,0.07);
+      --border2:   rgba(255,255,255,0.12);
+      --accent:    #e8ff3c;
+      --accent2:   #ff5c3a;
+      --text:      #f0eee8;
+      --muted:     #7a7a8a;
+      --font-head: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+      --radius:    12px;
+      --nav-h:     68px;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ============================================================
+       NOISE TEXTURE OVERLAY
+    ============================================================ */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 180px;
+      opacity: 0.45;
+    }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--nav-h);
+      display: flex; align-items: center;
+      padding: 0 5vw;
+      background: rgba(10,10,12,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    nav .logo {
+      font-family: var(--font-head);
+      font-size: 1.7rem;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      flex: 1;
+    }
+    nav .logo span { color: var(--text); }
+    nav ul {
+      list-style: none;
+      display: flex; gap: 2rem;
+    }
+    nav ul li a {
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav ul li a:hover { color: var(--accent); }
+    .nav-cta {
+      margin-left: 2rem;
+      background: var(--accent);
+      color: #0a0a0c !important;
+      padding: 0.45rem 1.1rem;
+      border-radius: 40px;
+      font-weight: 600 !important;
+      letter-spacing: 0.05em;
+      transition: transform 0.2s, box-shadow 0.2s !important;
+    }
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(232,255,60,0.35) !important;
+      color: #0a0a0c !important;
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column; gap: 5px; cursor: pointer;
+      background: none; border: none; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed; top: var(--nav-h); left: 0; right: 0;
+      background: rgba(10,10,12,0.97);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 5vw 2rem;
+      z-index: 99;
+      flex-direction: column; gap: 1.2rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 1rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu a:hover { color: var(--accent); }
+
+    /* ============================================================
+       SECTION LAYOUT HELPERS
+    ============================================================ */
+    section { position: relative; z-index: 1; }
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 5vw; }
+    .section-pad { padding: 6rem 0; }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-family: var(--font-head);
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 520px;
+      line-height: 1.7;
+    }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0;
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding-top: var(--nav-h);
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 60% 60% at 70% 40%, rgba(232,255,60,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 20% 80%, rgba(255,92,58,0.07) 0%, transparent 70%),
+        var(--bg);
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      width: 100%;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+      border-radius: 40px;
+      padding: 0.3rem 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow .dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+    .hero-title {
+      font-family: var(--font-head);
+      font-size: clamp(4rem, 8vw, 7.5rem);
+      line-height: 0.92;
+      letter-spacing: 0.01em;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title .accent { color: var(--accent); }
+    .hero-title .stroke {
+      -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+      color: transparent;
+    }
+    .hero-tagline {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 420px;
+      margin-bottom: 2.5rem;
+      line-height: 1.75;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    /* WA Button */
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--accent);
+      color: #0a0a0c;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      padding: 0.85rem 2rem;
+      border-radius: 4px;
+      border: none; cursor: pointer;
+      transition: transform 0.22s, box-shadow 0.22s;
+    }
+    .btn-wa:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(232,255,60,0.35);
+    }
+    .btn-wa svg { flex-shrink: 0; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      padding: 0.85rem 2rem;
+      border-radius: 4px;
+      border: 1px solid var(--border2);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Hero visual / waveform */
+    .hero-visual {
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .waveform-wrap {
+      width: 100%; max-width: 480px;
+      aspect-ratio: 1;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .waveform-wrap .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      animation: pulse-ring 3s ease-out infinite;
+    }
+    .waveform-wrap .ring:nth-child(1) { width: 75%; height: 75%; animation-delay: 0s; }
+    .waveform-wrap .ring:nth-child(2) { width: 88%; height: 88%; animation-delay: 0.6s; }
+    .waveform-wrap .ring:nth-child(3) { width: 100%; height: 100%; animation-delay: 1.2s; }
+    @keyframes pulse-ring {
+      0% { opacity: 0.6; transform: scale(0.95); }
+      60% { opacity: 0.15; transform: scale(1.02); }
+      100% { opacity: 0; transform: scale(1.06); }
+    }
+    .waveform-center {
+      width: 56%; aspect-ratio: 1;
+      background: var(--bg3);
+      border-radius: 50%;
+      border: 1px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2;
+    }
+    .waveform-bars {
+      display: flex; align-items: center; gap: 3px;
+    }
+    .waveform-bars span {
+      display: block; width: 3px;
+      background: var(--accent);
+      border-radius: 3px;
+      animation: eq 1.2s ease-in-out infinite alternate;
+    }
+    .waveform-bars span:nth-child(1)  { height: 12px; animation-delay: 0s; }
+    .waveform-bars span:nth-child(2)  { height: 28px; animation-delay: 0.1s; }
+    .waveform-bars span:nth-child(3)  { height: 44px; animation-delay: 0.2s; }
+    .waveform-bars span:nth-child(4)  { height: 56px; animation-delay: 0.05s; }
+    .waveform-bars span:nth-child(5)  { height: 36px; animation-delay: 0.15s; }
+    .waveform-bars span:nth-child(6)  { height: 20px; animation-delay: 0.25s; }
+    .waveform-bars span:nth-child(7)  { height: 44px; animation-delay: 0.08s; }
+    .waveform-bars span:nth-child(8)  { height: 60px; animation-delay: 0.18s; }
+    .waveform-bars span:nth-child(9)  { height: 48px; animation-delay: 0.12s; }
+    .waveform-bars span:nth-child(10) { height: 28px; animation-delay: 0.22s; }
+    .waveform-bars span:nth-child(11) { height: 14px; animation-delay: 0.03s; }
+    @keyframes eq {
+      from { transform: scaleY(0.3); }
+      to   { transform: scaleY(1); }
+    }
+
+    /* Stats row */
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+    .hero-stat .num {
+      font-family: var(--font-head);
+      font-size: 2.2rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .hero-stat .lbl {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    /* ============================================================
+       ABOUT
+    ============================================================ */
+    #about { background: var(--bg2); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .service-pills {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      margin-top: 2rem;
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(232,255,60,0.07);
+      border: 1px solid rgba(232,255,60,0.2);
+      border-radius: 40px;
+      padding: 0.35rem 0.9rem;
+    }
+    .about-cards {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .about-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .about-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+    .about-card .icon {
+      font-size: 1.6rem; margin-bottom: 0.6rem;
+    }
+    .about-card h4 {
+      font-family: var(--font-head);
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+    }
+    .about-card p { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
+
+    /* ============================================================
+       EQUIPMENT
+    ============================================================ */
+    #equipment { background: var(--bg); }
+    .eq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.2rem;
+      margin-top: 3rem;
+    }
+    .eq-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem 1.4rem;
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .eq-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.35s;
+    }
+    .eq-card:hover { border-color: var(--border2); transform: translateY(-4px); }
+    .eq-card:hover::before { transform: scaleX(1); }
+    .eq-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .eq-name {
+      font-family: var(--font-head);
+      font-size: 1.2rem; letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+    }
+    .eq-model { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); margin-bottom: 0.6rem; }
+    .eq-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+
+    /* ============================================================
+       PRICING
+    ============================================================ */
+    #pricing { background: var(--bg2); }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin-top: 3rem;
+    }
+    .pricing-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.2rem 2rem;
+      position: relative; overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+      display: flex; flex-direction: column;
+    }
+    .pricing-card.featured {
+      background: linear-gradient(145deg, #1a1a24, #111116);
+      border-color: rgba(232,255,60,0.3);
+    }
+    .pricing-card.featured::after {
+      content: 'POPULAR';
+      position: absolute; top: 1.2rem; right: -2rem;
+      background: var(--accent);
+      color: #0a0a0c;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 0.25rem 2.8rem;
+      transform: rotate(45deg);
+    }
+    .pricing-card:hover { transform: translateY(-5px); border-color: var(--border2); }
+    .pricing-card.featured:hover { border-color: rgba(232,255,60,0.5); }
+    .pricing-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+    }
+    .pricing-price {
+      font-family: var(--font-head);
+      font-size: 3.5rem;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+    .pricing-price sup { font-size: 1.5rem; vertical-align: super; }
+    .pricing-duration { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.8rem; }
+    .pricing-features { list-style: none; flex: 1; }
+    .pricing-features li {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.88rem; color: var(--muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .pricing-features li:last-child { border-bottom: none; }
+    .pricing-features li::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .pricing-cta {
+      margin-top: 2rem;
+      display: block;
+      text-align: center;
+      padding: 0.85rem;
+      border-radius: 4px;
+      border: 1px solid var(--border2);
+      font-weight: 600;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .pricing-cta:hover { border-color: var(--accent); color: var(--accent); }
+    .pricing-card.featured .pricing-cta {
+      background: var(--accent);
+      color: #0a0a0c;
+      border-color: var(--accent);
+    }
+    .pricing-card.featured .pricing-cta:hover {
+      box-shadow: 0 8px 30px rgba(232,255,60,0.35);
+    }
+    .pricing-card.featured .pricing-price { color: var(--accent); }
+
+    /* ============================================================
+       CALENDAR
+    ============================================================ */
+    #availability { background: var(--bg); }
+    .calendar-wrap {
+      margin-top: 3rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .calendar-wrap iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+      display: block;
+    }
+    .calendar-placeholder {
+      width: 100%; height: 500px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem;
+      background: var(--bg3);
+      border-radius: var(--radius);
+    }
+    .calendar-placeholder .big-icon { font-size: 3rem; }
+    .calendar-placeholder p { color: var(--muted); font-size: 0.9rem; text-align: center; max-width: 340px; }
+    .calendar-placeholder code {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      background: rgba(232,255,60,0.08);
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+    }
+
+    /* ============================================================
+       GALLERY
+    ============================================================ */
+    #gallery { background: var(--bg2); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 0.8rem;
+      margin-top: 3rem;
+    }
+    .gallery-item {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      position: relative;
+      cursor: pointer;
+    }
+    .gallery-item:first-child { grid-column: span 2; grid-row: span 2; aspect-ratio: unset; }
+    .gallery-item .placeholder-img {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 0.5rem;
+      background: linear-gradient(135deg, var(--bg3), #1e1e28);
+      transition: transform 0.4s;
+    }
+    .gallery-item:hover .placeholder-img { transform: scale(1.04); }
+    .gallery-item .placeholder-img .gi { font-size: 2.2rem; opacity: 0.4; }
+    .gallery-item .placeholder-img span { font-size: 0.75rem; color: var(--muted); }
+    .gallery-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex; align-items: flex-end; padding: 1rem;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-overlay span { font-size: 0.82rem; font-weight: 500; color: var(--text); }
+
+    /* ============================================================
+       BOOKING
+    ============================================================ */
+    #booking { background: var(--bg); }
+    .booking-inner {
+      max-width: 680px; margin: 0 auto; text-align: center;
+    }
+    .booking-inner .section-title { margin-bottom: 1rem; }
+    .booking-inner .section-sub { margin: 0 auto 2.5rem; text-align: center; }
+    .booking-steps {
+      display: flex; justify-content: center; gap: 1rem;
+      flex-wrap: wrap; margin-bottom: 2.5rem;
+    }
+    .step-pill {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 0.5rem 1.1rem;
+      font-size: 0.83rem;
+    }
+    .step-pill .num {
+      width: 22px; height: 22px;
+      background: var(--accent);
+      color: #0a0a0c;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.72rem;
+      flex-shrink: 0;
+    }
+    .booking-inner .btn-wa { font-size: 1.1rem; padding: 1.1rem 2.8rem; }
+    .wa-format {
+      margin-top: 1.5rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: left;
+    }
+    .wa-format strong { color: var(--accent); display: block; margin-bottom: 0.4rem; font-family: var(--font-body); font-size: 0.8rem; }
+
+    /* ============================================================
+       LOCATION
+    ============================================================ */
+    #location { background: var(--bg2); }
+    .location-grid {
+      display: grid; grid-template-columns: 1fr 1.4fr;
+      gap: 3rem; align-items: start;
+      margin-top: 3rem;
+    }
+    .location-info { display: flex; flex-direction: column; gap: 1.2rem; }
+    .info-row {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 1rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .info-row .ico { font-size: 1.4rem; flex-shrink: 0; padding-top: 0.1rem; }
+    .info-row .lbl {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.2rem;
+    }
+    .info-row .val { font-size: 0.9rem; color: var(--text); line-height: 1.5; }
+    .map-wrap {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      height: 360px;
+    }
+    .map-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+    .map-placeholder {
+      width: 100%; height: 100%;
+      background: var(--bg3);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.8rem;
+      border-radius: var(--radius);
+    }
+    .map-placeholder .ico { font-size: 2.5rem; }
+    .map-placeholder p { font-size: 0.82rem; color: var(--muted); text-align: center; }
+    .map-placeholder code { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 3.5rem 0 2rem;
+    }
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 3rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .footer-brand .logo {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.8rem;
+    }
+    .footer-brand p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; max-width: 240px; }
+    .footer-col h5 {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-col ul li a {
+      font-size: 0.88rem; color: var(--muted);
+      transition: color 0.2s;
+    }
+    .footer-col ul li a:hover { color: var(--accent); }
+    .social-links { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .social-btn {
+      width: 38px; height: 38px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .social-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-bottom p { font-size: 0.78rem; color: var(--muted); }
+
+    /* ============================================================
+       SCROLL REVEAL
+    ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 900px) {
+      nav ul { display: none; }
+      .nav-cta { display: none; }
+      .hamburger { display: flex; margin-left: auto; }
+
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero-tagline { margin: 0 auto 2.5rem; }
+      .hero-actions { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-visual { order: -1; }
+      .waveform-wrap { max-width: 280px; }
+
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .about-cards { grid-template-columns: 1fr 1fr; }
+
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-item:first-child { grid-column: span 1; grid-row: span 1; }
+
+      .location-grid { grid-template-columns: 1fr; }
+
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    }
+
+    @media (max-width: 600px) {
+      .section-pad { padding: 4rem 0; }
+      .about-cards { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-item:first-child { grid-column: span 1; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .hero-title { font-size: 3.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav id="navbar">
+    <div class="logo">ECHO<span> STUDIO</span></div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#equipment">Equipment</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#availability">Availability</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#location">Location</a></li>
+      <li><a href="https://wa.me/919074718884?text=Hi%20I%20want%20to%20book%20the%20studio" target="_blank" class="nav-cta">Book Now</a></li>
+    </ul>
+    <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about"        onclick="closeMenu()">About</a>
+    <a href="#equipment"    onclick="closeMenu()">Equipment</a>
+    <a href="#pricing"      onclick="closeMenu()">Pricing</a>
+    <a href="#availability" onclick="closeMenu()">Availability</a>
+    <a href="#gallery"      onclick="closeMenu()">Gallery</a>
+    <a href="#location"     onclick="closeMenu()">Location</a>
+    <a href="https://wa.me/919074718884?text=Hi%20I%20want%20to%20book%20the%20studio" target="_blank" onclick="closeMenu()">📲 Book via WhatsApp</a>
+  </div>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <!-- Left content -->
+        <div>
+          <div class="hero-eyebrow">
+            <span class="dot"></span>
+            Now Accepting Bookings
+          </div>
+          <h1 class="hero-title">
+            WHERE<br>
+            SOUND<br>
+            <span class="accent">BECOMES</span><br>
+            <span class="stroke">ART.</span>
+          </h1>
+          <p class="hero-tagline">
+            Professional Recording &amp; Production Studio.<br>
+            World-class gear. Acoustically treated rooms. Your vision, perfectly captured.
+          </p>
+          <div class="hero-actions">
+            <a href="https://wa.me/919074718884?text=Hi%20I%20want%20to%20book%20the%20studio" target="_blank" class="btn-wa">
+              <!-- WhatsApp SVG icon -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+              </svg>
+              Book via WhatsApp
+            </a>
+            <a href="#pricing" class="btn-outline">View Rates ↓</a>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="num">5+</div>
+              <div class="lbl">Years Active</div>
+            </div>
+            <div class="hero-stat">
+              <div class="num">300+</div>
+              <div class="lbl">Sessions Done</div>
+            </div>
+            <div class="hero-stat">
+              <div class="num">24/7</div>
+              <div class="lbl">Available</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right visual -->
+        <div class="hero-visual">
+          <div class="waveform-wrap">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="waveform-center">
+              <div class="waveform-bars">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================
+       ABOUT
+  ============================================================ -->
+  <section id="about" class="section-pad">
+    <div class="container">
+      <div class="about-grid">
+        <div class="reveal">
+          <p class="section-label">// about us</p>
+          <h2 class="section-title">BUILT FOR<br>SERIOUS<br>ARTISTS.</h2>
+          <p class="section-sub">
+            Echo Studio is a professional-grade recording facility designed for musicians, podcasters, voice artists, and producers who demand the highest quality. Our acoustically treated rooms and top-tier signal chain guarantee every take sounds exactly as intended.
+          </p>
+          <div class="service-pills">
+            <span class="pill">🎙 Recording</span>
+            <span class="pill">🎚 Mixing</span>
+            <span class="pill">🎧 Mastering</span>
+            <span class="pill">🎤 Podcast</span>
+            <span class="pill">🥁 Rehearsal</span>
+            <span class="pill">🎹 Production</span>
+          </div>
+        </div>
+        <div class="about-cards reveal">
+          <div class="about-card">
+            <div class="icon">🎙</div>
+            <h4>RECORDING</h4>
+            <p>Vocals, instruments, full band — tracked in our professionally treated live room.</p>
+          </div>
+          <div class="about-card">
+            <div class="icon">🎚</div>
+            <h4>MIXING</h4>
+            <p>Blend and balance your tracks with precision on calibrated studio monitors.</p>
+          </div>
+          <div class="about-card">
+            <div class="icon">🎤</div>
+            <h4>PODCAST</h4>
+            <p>Studio-quality podcast and voice-over recording with broadcast-ready output.</p>
+          </div>
+          <div class="about-card">
+            <div class="icon">🥁</div>
+            <h4>REHEARSAL</h4>
+            <p>Full backline available. Perfect space to tighten your live set before showtime.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================
+       EQUIPMENT
+  ============================================================ -->
+  <section id="equipment" class="section-pad">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-label">// studio gear</p>
+        <h2 class="section-title">WORLD-CLASS<br>EQUIPMENT.</h2>
+        <p class="section-sub">Every piece of gear is professionally maintained and calibrated for optimal performance.</p>
+      </div>
+      <div class="eq-grid">
+        <div class="eq-card reveal">
+          <div class="eq-icon">🎙</div>
+          <div class="eq-name">LARGE DIAPHRAGM MIC</div>
+          <div class="eq-model">Neumann U87 Ai</div>
+          <p class="eq-desc">Industry-standard condenser microphone with legendary warmth and presence for vocals.</p>
+        </div>
+        <div class="eq-card reveal">
+          <div class="eq-icon">🖥</div>
+          <div class="eq-name">AUDIO INTERFACE</div>
+          <div class="eq-model">Universal Audio Apollo X8</div>
+          <p class="eq-desc">Premium Thunderbolt interface with built-in UAD processing and transparent conversion.</p>
+        </div>
+        <div class="eq-card reveal">
+          <div class="eq-icon">🔊</div>
+          <div class="eq-name">STUDIO MONITORS</div>
+          <div class="eq-model">Genelec 8351B</div>
+          <p class="eq-desc">SAM studio monitors with incredibly accurate, room-corrected playback for precise mixing decisions.</p>
+        </div>
+        <div class="eq-card reveal">
+          <div class="eq-icon">🎹</div>
+          <div class="eq-name">MIDI KEYBOARD</div>
+          <div class="eq-model">Native Instruments Komplete 88</div>
+          <p class="eq-desc">Full 88-key weighted controller with seamless DAW integration for expressive performance.</p>
+        </div>
+        <div class="eq-card reveal">
+          <div class="eq-icon">🥁</div>
+          <div class="eq-name">DRUM KIT</div>
+          <div class="eq-model">DW Collector's Series</div>
+          <p class="eq-desc">Custom-spec acoustic drum kit professionally tuned and miked for recording or rehearsal.</p>
+        </div>
+        <div class="eq-card reveal">
+          <div class="eq-icon">🎸</div>
+          <div class="eq-name">GUITAR AMPLIFIER</div>
+          <div class="eq-model">Fender '65 Twin Reverb</div>
+          <p class="eq-desc">Classic clean headroom and chimey tone. Paired with an isolated cab for noise-free tracking.</p>
+        </div>
+        <div class="eq-card reveal">
+          <div class="eq-icon">🎛</div>
+          <div class="eq-name">OUTBOARD GEAR</div>
+          <div class="eq-model">SSL G-Bus Compressor + 1176</div>
+          <p class="eq-desc">Analog bus compression and limiting for that undeniable glue in your mix and master.</p>
+        </div>
+        <div class="eq-card reveal">
+          <div class="eq-icon">💻</div>
+          <div class="eq-name">DAW</div>
+          <div class="eq-model">Pro Tools Ultimate + Logic Pro</div>
+          <p class="eq-desc">Industry-standard software suite with an extensive library of plugins, loops, and virtual instruments.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================
+       PRICING
+  ============================================================ -->
+  <section id="pricing" class="section-pad">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-label">// rates</p>
+        <h2 class="section-title">SIMPLE,<br>TRANSPARENT<br>PRICING.</h2>
+        <p class="section-sub">No hidden charges. All sessions include engineer assistance and equipment access.</p>
+      </div>
+      <div class="pricing-grid">
+
+        <!-- Hourly -->
+        <div class="pricing-card reveal">
+          <div class="pricing-label">Hourly Session</div>
+          <div class="pricing-price"><sup>₹</sup>800</div>
+          <div class="pricing-duration">per hour · min. 2 hours</div>
+          <ul class="pricing-features">
+            <li>Full studio access</li>
+            <li>Engineer on request</li>
+            <li>All equipment included</li>
+            <li>Digital file delivery</li>
+            <li>Flexible scheduling</li>
+          </ul>
+          <a href="https://wa.me/919074718884?text=Hi%20I%20want%20to%20book%20an%20hourly%20session" target="_blank" class="pricing-cta">Book Hourly →</a>
+        </div>
+
+        <!-- Half Day (Featured) -->
+        <div class="pricing-card featured reveal">
+          <div class="pricing-label">Half-Day Session</div>
+          <div class="pricing-price"><sup>₹</sup>2,800</div>
+          <div class="pricing-duration">4 hours · best value</div>
+          <ul class="pricing-features">
+            <li>Full studio access</li>
+            <li>Dedicated engineer included</li>
+            <li>All equipment included</li>
+            <li>High-quality file delivery</li>
+            <li>1 revision mix</li>
+            <li>Session refreshments</li>
+          </ul>
+          <a href="https://wa.me/919074718884?text=Hi%20I%20want%20to%20book%20a%20half-day%20session" target="_blank" class="pricing-cta">Book Half-Day →</a>
+        </div>
+
+        <!-- Full Day -->
+        <div class="pricing-card reveal">
+          <div class="pricing-label">Full-Day Session</div>
+          <div class="pricing-price"><sup>₹</sup>4,999</div>
+          <div class="pricing-duration">8 hours · full production day</div>
+          <ul class="pricing-features">
+            <li>Exclusive studio access</li>
+            <li>Senior engineer included</li>
+            <li>All equipment included</li>
+            <li>Stems + master delivery</li>
+            <li>2 revision mixes</li>
+            <li>Session refreshments</li>
+            <li>Priority scheduling</li>
+          </ul>
+          <a href="https://wa.me/919074718884?text=Hi%20I%20want%20to%20book%20a%20full-day%20session" target="_blank" class="pricing-cta">Book Full Day →</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================
+       AVAILABILITY CALENDAR
+  ============================================================ -->
+  <section id="availability" class="section-pad">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-label">// schedule</p>
+        <h2 class="section-title">CHECK<br>AVAILABILITY.</h2>
+        <p class="section-sub">View our live booking calendar to find an open slot that works for you.</p>
+      </div>
+      <div class="calendar-wrap reveal">
+        <!--
+          REPLACE THIS PLACEHOLDER with your Google Calendar embed code:
+          1. Go to Google Calendar → Settings → Your Calendar → Integrate calendar
+          2. Copy the "Public URL to this calendar" embed iframe
+          3. Paste it here replacing the placeholder div below
+        -->
+        <div class="calendar-placeholder">
+          <div class="big-icon">📅</div>
+          <p>Paste your <strong>Google Calendar embed iframe</strong> here to show live availability.</p>
+          <p>Go to <code>Google Calendar → Settings → Integrate calendar → Embed code</code></p>
+        </div>
+        <!-- Example embed (replace src with your calendar URL):
+        <iframe src="https://calendar.google.com/calendar/embed?src=YOUR_CALENDAR_ID&ctz=Asia%2FKolkata"
+          style="border:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+        -->
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================
+       GALLERY
+  ============================================================ -->
+  <section id="gallery" class="section-pad">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-label">// studio photos</p>
+        <h2 class="section-title">THE SPACE.</h2>
+        <p class="section-sub">Acoustically designed for both vibe and performance. Take a look around.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item reveal">
+          <div class="placeholder-img">
+            <span class="gi">🎙</span>
+            <span>Live Room</span>
+          </div>
+          <div class="gallery-overlay"><span>Main Live Room</span></div>
+        </div>
+        <div class="gallery-item reveal">
+          <div class="placeholder-img">
+            <span class="gi">🖥</span>
+            <span>Control Room</span>
+          </div>
+          <div class="gallery-overlay"><span>Control Room</span></div>
+        </div>
+        <div class="gallery-item reveal">
+          <div class="placeholder-img">
+            <span class="gi">🎹</span>
+            <span>Keys Setup</span>
+          </div>
+          <div class="gallery-overlay"><span>Keyboard Station</span></div>
+        </div>
+        <div class="gallery-item reveal">
+          <div class="placeholder-img">
+            <span class="gi">🥁</span>
+            <span>Drum Room</span>
+          </div>
+          <div class="gallery-overlay"><span>Drum Room</span></div>
+        </div>
+        <div class="gallery-item reveal">
+          <div class="placeholder-img">
+            <span class="gi">🎚</span>
+            <span>Mixing Desk</span>
+          </div>
+          <div class="gallery-overlay"><span>Mix Suite</span></div>
+        </div>
+      </div>
+      <p style="margin-top:1.2rem; font-size:0.8rem; color:var(--muted); text-align:center;">
+        Replace placeholder divs with <code style="font-family:var(--font-mono); color:var(--accent);">&lt;img&gt;</code> tags to display your studio photos.
+      </p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================
+       BOOKING CTA
+  ============================================================ -->
+  <section id="booking" class="section-pad">
+    <div class="container">
+      <div class="booking-inner reveal">
+        <p class="section-label" style="text-align:center;">// book a session</p>
+        <h2 class="section-title">READY TO<br>CREATE?</h2>
+        <p class="section-sub">Booking is simple — just message us on WhatsApp and we'll confirm your slot within minutes.</p>
+
+        <div class="booking-steps">
+          <div class="step-pill"><span class="num">1</span> Choose a date &amp; duration</div>
+          <div class="step-pill"><span class="num">2</span> Message us on WhatsApp</div>
+          <div class="step-pill"><span class="num">3</span> Get instant confirmation</div>
+        </div>
+
+        <a href="https://wa.me/919074718884?text=Hi%20I%20want%20to%20book%20the%20studio" target="_blank" class="btn-wa">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+          </svg>
+          Book via WhatsApp
+        </a>
+
+        <div class="wa-format">
+          <strong>📋 Suggested message format:</strong>
+          Hi, I want to book Echo Studio.<br>
+          Date: [DD/MM/YYYY]<br>
+          Time: [Start time – End time]<br>
+          Session type: [Recording / Podcast / Rehearsal / Mix]<br>
+          No. of people: [n]
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================
+       LOCATION
+  ============================================================ -->
+  <section id="location" class="section-pad">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-label">// find us</p>
+        <h2 class="section-title">WHERE<br>WE ARE.</h2>
+      </div>
+      <div class="location-grid">
+        <div class="location-info reveal">
+          <div class="info-row">
+            <div class="ico">📍</div>
+            <div>
+              <div class="lbl">Address</div>
+              <div class="val">Echo Studio, 2nd Floor, Creative Hub,<br>MG Road, Thiruvananthapuram, Kerala — 695001</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="ico">📞</div>
+            <div>
+              <div class="lbl">Phone / WhatsApp</div>
+              <div class="val"><a href="tel:+919074718884" style="color:var(--accent);">+91 90747 18884</a></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="ico">✉️</div>
+            <div>
+              <div class="lbl">Email</div>
+              <div class="val"><a href="mailto:book@echostudio.in" style="color:var(--accent);">book@echostudio.in</a></div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="ico">🕐</div>
+            <div>
+              <div class="lbl">Studio Hours</div>
+              <div class="val">Monday – Sunday: 8:00 AM – 11:00 PM<br>24-hour sessions available on request</div>
+            </div>
+          </div>
+        </div>
+        <div class="map-wrap reveal">
+          <!--
+            REPLACE THIS with your Google Maps embed:
+            1. Go to maps.google.com → Navigate to your location
+            2. Click Share → Embed a map → Copy HTML
+            3. Paste the iframe below
+          -->
+          <div class="map-placeholder">
+            <div class="ico">🗺</div>
+            <p>Paste your <strong>Google Maps embed iframe</strong> here.</p>
+            <p><code>maps.google.com → Share → Embed a map</code></p>
+          </div>
+          <!-- Example:
+          <iframe src="https://www.google.com/maps/embed?pb=YOUR_EMBED_URL"
+            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="logo">ECHO STUDIO</div>
+          <p>Professional recording, mixing, and production studio in Thiruvananthapuram, Kerala. Your sound. Perfected.</p>
+          <div class="social-links" style="margin-top:1.2rem;">
+            <a href="#" class="social-btn" title="Instagram">📸</a>
+            <a href="#" class="social-btn" title="YouTube">▶️</a>
+            <a href="#" class="social-btn" title="Facebook">👤</a>
+            <a href="https://wa.me/919074718884" target="_blank" class="social-btn" title="WhatsApp">💬</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h5>Services</h5>
+          <ul>
+            <li><a href="#about">Recording</a></li>
+            <li><a href="#about">Mixing & Mastering</a></li>
+            <li><a href="#about">Podcast Studio</a></li>
+            <li><a href="#about">Rehearsal Room</a></li>
+            <li><a href="#about">Music Production</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Studio</h5>
+          <ul>
+            <li><a href="#equipment">Equipment</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#availability">Availability</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#location">Location</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="tel:+919074718884">+91 90747 18884</a></li>
+            <li><a href="mailto:book@echostudio.in">book@echostudio.in</a></li>
+            <li><a href="https://wa.me/919074718884?text=Hi%20I%20want%20to%20book%20the%20studio" target="_blank">WhatsApp Us</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Echo Studio. All rights reserved.</p>
+        <p style="color:var(--muted);">Thiruvananthapuram, Kerala, India</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    /* ------- Mobile menu toggle ------- */
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const mobileMenu   = document.getElementById('mobileMenu');
+
+    hamburgerBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+
+    function closeMenu() {
+      mobileMenu.classList.remove('open');
+    }
+
+    /* ------- Scroll reveal ------- */
+    const revealEls = document.querySelectorAll('.reveal');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          // stagger siblings slightly
+          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealEls.forEach(el => observer.observe(el));
+
+    /* ------- Sticky nav shadow on scroll ------- */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        navbar.style.boxShadow = '0 4px 30px rgba(0,0,0,0.4)';
+      } else {
+        navbar.style.boxShadow = 'none';
+      }
+    });
+  </script>
+
+</body>
+</html>
