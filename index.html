@@ -299,15 +299,17 @@
     }
 
     .bar {
-      animation: eq var(--dur) cubic-bezier(.45,.05,.55,.95) infinite alternate;
+      animation: eqSmooth var(--dur) ease-in-out infinite;
       transform-origin: bottom center;
       transform-box: fill-box;
     }
 
-    @keyframes eq {
-      0%   { transform: scaleY(0.65); }
-      50%  { transform: scaleY(0.85); }
-      100% { transform: scaleY(0.65); }
+    @keyframes eqSmooth {
+      0%   { transform: scaleY(0.55); }
+      25%  { transform: scaleY(0.85); }
+      50%  { transform: scaleY(1); }
+      75%  { transform: scaleY(0.85); }
+      100% { transform: scaleY(0.55); }
     }
 
     .sub-row {
@@ -556,11 +558,133 @@
       border-radius: var(--radius);
       overflow: hidden;
     }
-    .calendar-wrap iframe {
+    #customCalendar {
       width: 100%;
-      height: 500px;
+      padding: 1.5rem;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .cal-day {
+      background: linear-gradient(145deg, #1a1a24, #111116);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0.9rem 0;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text);
+      transition: transform 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .cal-day.available:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      background: rgba(41,182,246,0.08);
+    }
+
+    .cal-day.unavailable {
+      background: #1a1a1f;
+      color: #666;
+      border-color: #2c2c33;
+      opacity: 0.55;
+    }
+
+    .cal-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-bottom: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-align: center;
+      letter-spacing: 0.1em;
+    }
+
+    .calendar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .calendar-month {
+      font-family: var(--font-head);
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+    }
+
+    .calendar-legend {
+      display: flex;
+      gap: 14px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-family: var(--font-mono);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    .legend-available { background: var(--accent); }
+    .legend-unavailable { background: #444; }
+
+    /* Booking modal */
+    .booking-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .booking-modal.open {
+      display: flex;
+    }
+
+    .booking-box {
+      width: 92%;
+      max-width: 420px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.6rem;
+    }
+
+    .booking-box h3 {
+      font-family: var(--font-head);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.8rem;
+    }
+
+    .booking-box input,
+    .booking-box textarea {
+      width: 100%;
+      margin-bottom: 0.7rem;
+      padding: 0.55rem 0.7rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-body);
+    }
+
+    .booking-box button {
+      background: var(--accent);
       border: none;
-      display: block;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
     }
     .calendar-placeholder {
       width: 100%; height: 500px;
@@ -898,55 +1022,7 @@
         <!-- Right visual -->
         <div class="hero-visual">
           <div class="logo-root">
-            <svg class="play-svg" viewBox="0 0 500 460" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#29B6F6"/>
-                  <stop offset="28%" stop-color="#E040FB"/>
-                  <stop offset="55%" stop-color="#FF6B6B"/>
-                  <stop offset="80%" stop-color="#FFB300"/>
-                  <stop offset="100%" stop-color="#FFD600"/>
-                </linearGradient>
-
-                <clipPath id="triClip">
-                  <polygon points="72,50 72,410 448,230"/>
-                </clipPath>
-              </defs>
-
-              <polygon
-                points="60,40 60,420 455,230"
-                fill="none"
-                stroke="url(#grad1)"
-                stroke-width="38"
-                stroke-linejoin="round"
-                stroke-linecap="round"
-              />
-
-              <g clip-path="url(#triClip)">
-                <!-- centered waveform cluster -->
-
-                <!-- left small -->
-                <rect class="bar" style="--dur:2.1s" x="200" y="210" width="8" height="130" rx="4" fill="#4a4040"/>
-
-                <!-- left mid -->
-                <rect class="bar" style="--dur:1.9s" x="215" y="180" width="10" height="160" rx="4" fill="#4a4040"/>
-
-                <!-- left high -->
-                <rect class="bar" style="--dur:1.7s" x="232" y="140" width="12" height="200" rx="4" fill="#4a4040"/>
-
-                <!-- center peak -->
-                <rect class="bar" style="--dur:1.5s" x="252" y="110" width="14" height="230" rx="5" fill="#4a4040"/>
-
-                <!-- right high -->
-                <rect class="bar" style="--dur:1.7s" x="276" y="140" width="12" height="200" rx="4" fill="#4a4040"/>
-
-                <!-- right mid -->
-                <rect class="bar" style="--dur:1.9s" x="295" y="180" width="10" height="160" rx="4" fill="#4a4040"/>
-
-                <!-- right small -->
-                <rect class="bar" style="--dur:2.1s" x="310" y="210" width="8" height="130" rx="4" fill="#4a4040"/>
-              </g>
-            </svg>
+            <img class="play-svg" src="logo.png" alt="Creative Media Designs Logo">
 
             <div class="logo-text-wrap">
               <svg viewBox="0 0 480 88" width="100%" height="88">
@@ -1101,7 +1177,7 @@
         <p class="section-sub">View our live booking calendar to find an open slot that works for you.</p>
       </div>
       <div class="calendar-wrap reveal">
-        <iframe src="https://calendar.google.com/calendar/embed?src=arjuncreaative%40gmail.com&ctz=Asia%2FKolkata" style="border:0" width="100%" height="500" frameborder="0" scrolling="no"></iframe>
+        <div id="customCalendar"></div>
       </div>
     </div>
   </section>
@@ -1299,6 +1375,34 @@
     </div>
   </footer>
 
+  <!-- Booking Modal -->
+  <div class="booking-modal" id="bookingModal">
+    <div class="booking-box">
+      <h3>Book Studio</h3>
+      <div id="selectedDateLabel" style="font-size:0.9rem;margin-bottom:0.6rem;color:var(--muted);"></div>
+
+      <input id="clientName" placeholder="Your name">
+      <input id="clientType" placeholder="Session type (Recording / Podcast)">
+      <div style="display:flex; gap:6px; margin-bottom:0.7rem;">
+        <select id="timeHour" style="flex:1; padding:0.55rem; background:var(--bg2); border:1px solid var(--border); border-radius:6px; color:var(--text);">
+          <option value="">HH</option>
+        </select>
+
+        <select id="timeMinute" style="flex:1; padding:0.55rem; background:var(--bg2); border:1px solid var(--border); border-radius:6px; color:var(--text);">
+          <option value="">MM</option>
+        </select>
+
+        <select id="timeAmPm" style="flex:1; padding:0.55rem; background:var(--bg2); border:1px solid var(--border); border-radius:6px; color:var(--text);">
+          <option value="AM">AM</option>
+          <option value="PM">PM</option>
+        </select>
+      </div>
+      <textarea id="clientNotes" placeholder="Extra notes"></textarea>
+
+      <button onclick="confirmBooking()">Confirm Booking</button>
+    </div>
+  </div>
+
   <!-- ============================================================
        JAVASCRIPT
   ============================================================ -->
@@ -1339,6 +1443,183 @@
         navbar.style.boxShadow = 'none';
       }
     });
+
+    /* ------- Simple availability calendar ------- */
+
+    const manualUnavailableDates = [
+      "2026-03-10",
+      "2026-03-11",
+      "2026-03-15",
+      "2026-03-18"
+    ];
+
+    /* Optional: Google Calendar ICS feed (public calendar) */
+    const calendarFeedURL = "https://calendar.google.com/calendar/ical/arjuncreaative%40gmail.com/public/basic.ics"; // paste public .ics URL here if using Google Calendar
+
+    let unavailableDates = [...manualUnavailableDates];
+    let selectedBookingDate = null;
+
+    /* load saved bookings */
+    const savedBookings = JSON.parse(localStorage.getItem("studioBookings") || "[]");
+    savedBookings.forEach(d => unavailableDates.push(d));
+
+    async function fetchCalendarEvents() {
+      if (!calendarFeedURL) return;
+
+      try {
+        const res = await fetch(calendarFeedURL);
+        const text = await res.text();
+
+        const matches = [...text.matchAll(/DTSTART:(\d{8})/g)];
+
+        matches.forEach(m => {
+          const raw = m[1];
+          const date =
+            raw.slice(0,4) + "-" +
+            raw.slice(4,6) + "-" +
+            raw.slice(6,8);
+
+          unavailableDates.push(date);
+        });
+
+      } catch (e) {
+        console.warn("Calendar fetch failed", e);
+      }
+    }
+
+    function renderCalendar() {
+      const cal = document.getElementById("customCalendar");
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const headerDays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+      const monthNames = [
+        "January","February","March","April","May","June",
+        "July","August","September","October","November","December"
+      ];
+
+      let html = `
+<div class="calendar-top">
+  <div class="calendar-month">${monthNames[month]} ${year}</div>
+  <div class="calendar-legend">
+    <span><span class="legend-dot legend-available"></span>Available</span>
+    <span><span class="legend-dot legend-unavailable"></span>Unavailable</span>
+  </div>
+</div>
+
+<div class="cal-header">
+`;
+      headerDays.forEach(d => html += `<div>${d}</div>`);
+      html += '</div>';
+
+      html += '<div class="cal-grid">';
+
+      for (let i = 0; i < firstDay; i++) {
+        html += '<div></div>';
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr =
+          year + "-" +
+          String(month + 1).padStart(2, "0") + "-" +
+          String(d).padStart(2, "0");
+
+        const unavailable = unavailableDates.includes(dateStr);
+
+        html += `<div class="cal-day ${unavailable ? "unavailable" : "available"}" 
+onclick="${unavailable ? '' : `openBooking('${dateStr}')`}">${d}</div>`;
+      }
+
+      html += "</div>";
+
+      cal.innerHTML = html;
+    }
+
+    function openBooking(dateStr){
+      selectedBookingDate = dateStr;
+
+      const modal = document.getElementById("bookingModal");
+      const label = document.getElementById("selectedDateLabel");
+
+      label.innerText = "Booking date: " + dateStr;
+
+      modal.classList.add("open");
+    }
+
+    function confirmBooking(){
+      if(!selectedBookingDate) return;
+
+      const name = document.getElementById("clientName").value || "Guest";
+      const type = document.getElementById("clientType").value || "Studio Session";
+      const notes = document.getElementById("clientNotes").value || "";
+
+      const hh = document.getElementById("timeHour").value;
+      const mm = document.getElementById("timeMinute").value;
+      const ap = document.getElementById("timeAmPm").value;
+
+      const timeStr = hh && mm ? `${hh}:${mm} ${ap}` : "Not specified";
+
+      unavailableDates.push(selectedBookingDate);
+
+      const saved = JSON.parse(localStorage.getItem("studioBookings") || "[]");
+      saved.push(selectedBookingDate);
+      localStorage.setItem("studioBookings", JSON.stringify(saved));
+
+      document.getElementById("bookingModal").classList.remove("open");
+
+      renderCalendar();
+
+      /* open whatsapp booking message */
+      const msg =
+`Hi I want to book CREATIVE studio
+
+Date: ${selectedBookingDate}
+Time: ${timeStr}
+Session: ${type}
+Name: ${name}
+Notes: ${notes}`;
+
+      const url = "https://wa.me/919074718884?text=" + encodeURIComponent(msg);
+      window.open(url, "_blank");
+    }
+    /* populate time dropdowns */
+    function initTimeSelectors(){
+      const hourSel = document.getElementById("timeHour");
+      const minSel = document.getElementById("timeMinute");
+
+      for(let h=1; h<=12; h++){
+        const opt=document.createElement("option");
+        opt.value=h;
+        opt.textContent=h.toString().padStart(2,"0");
+        hourSel.appendChild(opt);
+      }
+
+      for(let m=0; m<60; m+=5){
+        const opt=document.createElement("option");
+        opt.value=m;
+        opt.textContent=m.toString().padStart(2,"0");
+        minSel.appendChild(opt);
+      }
+    }
+
+    /* click outside closes modal */
+    document.addEventListener("click",(e)=>{
+      const modal = document.getElementById("bookingModal");
+      if(e.target === modal){
+        modal.classList.remove("open");
+      }
+    });
+
+(async () => {
+  await fetchCalendarEvents();
+  renderCalendar();
+  initTimeSelectors();
+})();
   </script>
 
 </body>
